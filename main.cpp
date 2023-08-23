@@ -9,12 +9,14 @@ extern "C" uint8_t _binary_MontserratMedium_nRxlJ_ttf_end[];
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(800, 800), "SFML works!");
+    sf::RenderWindow window(sf::VideoMode(800, 800), "Hanjie Japan Nonogram");
+    window.setVerticalSyncEnabled(true);
+    window.setFramerateLimit(60);
     sf::RectangleShape shape(sf::Vector2f(70.f, 70.f));
 
     sf::Font font;
 //    if (!font.loadFromFile("MontserratMedium_nRxlJ.ttf "))
-if (!font.loadFromMemory(_binary_MontserratMedium_nRxlJ_ttf_start,_binary_MontserratMedium_nRxlJ_ttf_end - _binary_MontserratMedium_nRxlJ_ttf_start))
+    if (!font.loadFromMemory(_binary_MontserratMedium_nRxlJ_ttf_start,_binary_MontserratMedium_nRxlJ_ttf_end - _binary_MontserratMedium_nRxlJ_ttf_start))
     {
         std::cout << "error";
     }
@@ -22,7 +24,7 @@ if (!font.loadFromMemory(_binary_MontserratMedium_nRxlJ_ttf_start,_binary_Montse
 
     float size = 70.f;
 
-    vector<vector<int>> image = 
+    vector<vector<int>> image =
     {
         {0, 0, 0, 1, 0, 0, 1},
         {0, 0, 1, 1, 1, 0, 0},
@@ -62,20 +64,26 @@ if (!font.loadFromMemory(_binary_MontserratMedium_nRxlJ_ttf_start,_binary_Montse
             if (event.type == sf::Event::Closed)
                 window.close();
 
-            if (event.type == sf::Event::MouseButtonPressed) 
+            if(event.type == sf::Event::Resized)
             {
-                if (event.mouseButton.button == sf::Mouse::Left) 
+                sf::FloatRect view(0, 0, event.size.width, event.size.height);
+                window.setView(sf::View(view));
+            }
+
+            if (event.type == sf::Event::MouseButtonPressed)
+            {
+                if (event.mouseButton.button == sf::Mouse::Left)
                 {
                     sf::Vector2i localPosition = sf::Mouse::getPosition(window);
                     if (
-                        (localPosition.x < size * cols + hint_rows * size) 
+                        (localPosition.x < size * cols + hint_rows * size)
                         && (localPosition.y < size * rows + hint_cols * size)
                         && (localPosition.x > hint_rows * size)
                         && (localPosition.y > hint_cols * size)
-                        ) 
+                    )
                     {
-                        int index = ((localPosition.x - hint_rows * int(size)) / static_cast<int>(size)) 
-                            + ((localPosition.y - hint_cols * int(size)) / static_cast<int>(size)) * cols;
+                        int index = ((localPosition.x - hint_rows * int(size)) / static_cast<int>(size))
+                                    + ((localPosition.y - hint_cols * int(size)) / static_cast<int>(size)) * cols;
 
                         sf::Color color = arr[index].getFillColor();
                         if (color == sf::Color::White) {

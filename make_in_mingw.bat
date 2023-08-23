@@ -9,10 +9,14 @@ pkg-config --libs --static sfml-all >> libsflags.tmp
 @echo -static -static-libgcc -static-libstdc++ >> libsflags.tmp 
 fix_msys2.exe
 
-
+astyle main.cpp
+del main.cpp.orig
 objcopy --prefix-symbol=_ --input-target binary --output-target pe-i386 --binary-architecture i386 MontserratMedium_nRxlJ.ttf font1.o
 g++ -o3 @cflags.tmp -c main.cpp -o main.o
 g++ main.o font1.o @libsflags.tmp @libsflags.tmp -o Japan.exe
 
 del fix_msys2.exe
+del cflags.tmp
+del libsflags.tmp
+del *.o
 

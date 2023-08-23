@@ -2,6 +2,7 @@
 #include <iostream>
 
 using namespace std;
+using namespace sf;
 
 extern "C" uint8_t _binary_MontserratMedium_nRxlJ_ttf_start[];
 extern "C" uint8_t _binary_MontserratMedium_nRxlJ_ttf_end[];
@@ -9,16 +10,16 @@ extern "C" uint8_t _binary_MontserratMedium_nRxlJ_ttf_end[];
 
 int main()
 {
-    sf::RenderWindow window(sf::VideoMode(800, 800), "Hanjie Japan Nonogram");
+    RenderWindow window(VideoMode(800, 800), "Hanjie Japan Nonogram");
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(60);
-    sf::RectangleShape shape(sf::Vector2f(70.f, 70.f));
+    RectangleShape shape(Vector2f(70.f, 70.f));
 
-    sf::Font font;
+    Font font;
 //    if (!font.loadFromFile("MontserratMedium_nRxlJ.ttf "))
     if (!font.loadFromMemory(_binary_MontserratMedium_nRxlJ_ttf_start,_binary_MontserratMedium_nRxlJ_ttf_end - _binary_MontserratMedium_nRxlJ_ttf_start))
     {
-        std::cout << "error";
+        cout << "error";
     }
 
 
@@ -41,16 +42,16 @@ int main()
     int hint_rows = (cols + 1) / 2;
     int hint_cols = (rows + 1) / 2;
 
-    vector<sf::RectangleShape> arr(n);
-    //sf::RectangleShape arr[n];
+    vector<RectangleShape> arr(n);
+    //RectangleShape arr[n];
     for (size_t i = 0; i < rows; i++)
     {
         for (size_t j = 0; j < cols; j++)
         {
-            sf::RectangleShape shape(sf::Vector2f(size, size));
-            shape.setOutlineColor(sf::Color::Black);
+            RectangleShape shape(Vector2f(size, size));
+            shape.setOutlineColor(Color::Black);
             shape.setOutlineThickness(-5.f);
-            shape.setFillColor(sf::Color::White);
+            shape.setFillColor(Color::White);
             shape.setPosition(hint_rows * size + j * size, hint_cols * size + i * size);
             arr[i * cols + j] = shape;
         }
@@ -58,23 +59,23 @@ int main()
 
     while (window.isOpen())
     {
-        sf::Event event;
+        Event event;
         while (window.pollEvent(event))
         {
-            if (event.type == sf::Event::Closed)
+            if (event.type == Event::Closed)
                 window.close();
 
-            if(event.type == sf::Event::Resized)
+            if(event.type == Event::Resized)
             {
-                sf::FloatRect view(0, 0, event.size.width, event.size.height);
-                window.setView(sf::View(view));
+                FloatRect view(0, 0, event.size.width, event.size.height);
+                window.setView(View(view));
             }
 
-            if (event.type == sf::Event::MouseButtonPressed)
+            if (event.type == Event::MouseButtonPressed)
             {
-                if (event.mouseButton.button == sf::Mouse::Left)
+                if (event.mouseButton.button == Mouse::Left)
                 {
-                    sf::Vector2i localPosition = sf::Mouse::getPosition(window);
+                    Vector2i localPosition = Mouse::getPosition(window);
                     if (
                         (localPosition.x < size * cols + hint_rows * size)
                         && (localPosition.y < size * rows + hint_cols * size)
@@ -85,31 +86,31 @@ int main()
                         int index = ((localPosition.x - hint_rows * int(size)) / static_cast<int>(size))
                                     + ((localPosition.y - hint_cols * int(size)) / static_cast<int>(size)) * cols;
 
-                        sf::Color color = arr[index].getFillColor();
-                        if (color == sf::Color::White) {
-                            arr[index].setFillColor(sf::Color::Green);
+                        Color color = arr[index].getFillColor();
+                        if (color == Color::White) {
+                            arr[index].setFillColor(Color::Green);
                         }
-                        else if (color == sf::Color::Green)
+                        else if (color == Color::Green)
                         {
-                            arr[index].setFillColor(sf::Color::Red);
+                            arr[index].setFillColor(Color::Red);
                         }
                         else
                         {
-                            arr[index].setFillColor(sf::Color::White);
+                            arr[index].setFillColor(Color::White);
                         }
                     }
                 }
             }
         }
 
-        window.clear(sf::Color::Cyan);
+        window.clear(Color::Cyan);
 
         for (size_t i = 0; i < n; i++)
         {
             window.draw(arr[i]);
         }
 
-        std::vector<std::vector <int>> cols_sums(cols);
+        vector<vector <int>> cols_sums(cols);
 
         for (size_t i = 0; i < cols; i++)
         {
@@ -119,14 +120,14 @@ int main()
             for (int j = rows - 1; j > -1; j--)
             {
                 if ((image[j][i] == 0) && (summa != 0)) {
-                    //std::cout << summa << " ";
+                    //cout << summa << " ";
                     cols_sums[i].push_back(summa);
 
-                    sf::Text text;
+                    Text text;
                     text.setFont(font);
                     text.setString(to_string(summa));
                     text.setCharacterSize(size / 3);
-                    text.setFillColor(sf::Color::Red);
+                    text.setFillColor(Color::Red);
                     text.setPosition(hint_rows * size + i * size + size / 3, hint_num * size + size / 3);
                     window.draw(text);
                     hint_num -= 1;
@@ -139,21 +140,21 @@ int main()
 
             }
             if (summa != 0) {
-                //std::cout << summa << "";
+                //cout << summa << "";
                 cols_sums[i].push_back(summa);
-                sf::Text text;
+                Text text;
                 text.setFont(font);
                 text.setString(to_string(summa));
                 text.setCharacterSize(size / 3);
-                text.setFillColor(sf::Color::Red);
+                text.setFillColor(Color::Red);
                 text.setPosition(hint_rows * size + i * size + size / 3, hint_num * size + size / 3);
                 window.draw(text);
             }
 
-            //std::cout << std::endl;
+            //cout << endl;
         }
 
-        std::vector<std::vector <int>> rows_sums(rows);
+        vector<vector <int>> rows_sums(rows);
 
         for (size_t i = 0; i < rows; i++)
         {
@@ -165,11 +166,11 @@ int main()
                 if ((image[i][j] == 0) && (summa != 0)) {
                     rows_sums[i].push_back(summa);
 
-                    sf::Text text;
+                    Text text;
                     text.setFont(font);
                     text.setString(to_string(summa));
                     text.setCharacterSize(size / 3);
-                    text.setFillColor(sf::Color::Red);
+                    text.setFillColor(Color::Red);
                     text.setPosition(hint_num * size + size / 3, hint_cols * size + i * size + size / 3);
                     window.draw(text);
                     hint_num -= 1;
@@ -182,11 +183,11 @@ int main()
             }
             if (summa != 0) {
                 rows_sums[i].push_back(summa);
-                sf::Text text;
+                Text text;
                 text.setFont(font);
                 text.setString(to_string(summa));
                 text.setCharacterSize(size / 3);
-                text.setFillColor(sf::Color::Red);
+                text.setFillColor(Color::Red);
                 text.setPosition(hint_num * size + size / 3, hint_cols * size + i * size + size / 3);
                 window.draw(text);
             }

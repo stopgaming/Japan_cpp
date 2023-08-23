@@ -3,13 +3,18 @@
 
 using namespace std;
 
+extern "C" uint8_t _binary_MontserratMedium_nRxlJ_ttf_start[];
+extern "C" uint8_t _binary_MontserratMedium_nRxlJ_ttf_end[];
+
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(800, 800), "SFML works!");
     sf::RectangleShape shape(sf::Vector2f(70.f, 70.f));
 
     sf::Font font;
-    if (!font.loadFromFile("arial.ttf"))
+//    if (!font.loadFromFile("MontserratMedium_nRxlJ.ttf "))
+if (!font.loadFromMemory(_binary_MontserratMedium_nRxlJ_ttf_start,_binary_MontserratMedium_nRxlJ_ttf_end - _binary_MontserratMedium_nRxlJ_ttf_start))
     {
         std::cout << "error";
     }
